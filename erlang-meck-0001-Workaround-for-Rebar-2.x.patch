@@ -1,0 +1,51 @@
+From: Peter Lemenkov <lemenkov@gmail.com>
+Date: Tue, 4 Jul 2017 16:57:00 +0300
+Subject: [PATCH] Workaround for Rebar 2.x
+
+Signed-off-by: Peter Lemenkov <lemenkov@gmail.com>
+
+diff --git a/test/meck_tests.erl b/test/meck_tests.erl
+index 270186c..401c466 100644
+--- a/test/meck_tests.erl
++++ b/test/meck_tests.erl
+@@ -1078,13 +1078,7 @@ cover_options_fail_({_OldPath, Src, Module}) ->
+ test_file(Module, Ext) ->
+     filename:join(test_dir(), atom_to_list(Module) ++ Ext).
+ 
+-test_dir() ->
+-    case code:which(?MODULE) of
+-        Filename when is_list(Filename) ->
+-            filename:dirname(Filename);
+-        Atom when is_atom(Atom) ->
+-            error({test_dir_not_found, ?MODULE, Atom})
+-    end.
++test_dir() -> "../" ++ filename:dirname(?FILE).
+ 
+ test_include() -> filename:join(test_dir(), "include").
+ 
+@@ -1098,14 +1092,14 @@ run_mock_no_cover_file(Module) ->
+ %% @doc Verify that passthrough calls _don't_ appear in cover
+ %% analysis.
+ no_cover_passthrough_test() ->
+-    {ok, _} = cover:compile("test/meck_test_module.erl"),
++    {ok, _} = cover:compile(test_file(meck_test_module, ".erl")),
+     {ok, {meck_test_module, {0,3}}} = cover:analyze(meck_test_module, module),
+     passthrough_test([no_passthrough_cover]),
+     {ok, {meck_test_module, {0,3}}} = cover:analyze(meck_test_module, module).
+ 
+ %% @doc Verify that passthrough calls appear in cover analysis.
+ cover_passthrough_test() ->
+-    {ok, _} = cover:compile("test/meck_test_module.erl"),
++    {ok, _} = cover:compile(test_file(meck_test_module, ".erl")),
+     ?assertEqual({ok, {meck_test_module, {0,3}}},
+                  cover:analyze(meck_test_module, module)),
+     passthrough_test([]),
+@@ -1113,7 +1107,7 @@ cover_passthrough_test() ->
+                  cover:analyze(meck_test_module, module)).
+ 
+ cover_path_test() ->
+-    {ok, _} = cover:compile("test/meck_test_module.erl"),
++    {ok, _} = cover:compile(test_file(meck_test_module, ".erl")),
+     ?assertEqual({ok, {meck_test_module, {0,3}}},
+                  cover:analyze(meck_test_module, module)),
+     ok = meck:new(meck_test_module, [passthrough]),
