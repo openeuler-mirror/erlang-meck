@@ -1,7 +1,7 @@
 %global realname meck
 %global upstream eproxus
 Name:		erlang-meck
-Version:	0.8.13
+Version:	0.9.2
 Release:	1
 BuildArch:	noarch
 Summary:	A mocking library for Erlang
@@ -34,5 +34,8 @@ modules, such as making sure no function is called in a way it should not.
 %{erlang_appdir}/
 
 %changelog
+* Sat Jan 22 2022 Ge Wang <wangge20@huawei.com> - 0.9.2-1
+- update to version 0.9.2
+
 * Sat Aug 29 2020 yaokai <yaokai13@huawei.com> - 0.8.13-1
 - package init
